@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proyecto 2 IA</title>
+
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<script type="text/javascript" src="js/select.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/tytus.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+<body class="bg-gray-100">
+  <div class="flex flex-col justify-start items-center w-full min-h-screen">
+    <h1 class="text-4xl text-center mt-10 font-bold text-gray-800">
+      Proyecto 2 sopes 1 - 202109567
+    </h1>
+    <div class="mt-6">
+      <label for="algorithmSelect" class="block text-lg font-medium text-gray-700">Selecciona un algoritmo de
+        ML:</label>
+      <select id="algorithmSelect" onchange="selectAlgorithm()"
+        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        <option value="linear_regression">Regresión Lineal</option>
+        <option value="polynomial_regression">Regresión Polinómica</option>
+        <option value="neural_network">
+          Red Neuronal
+        </option>
+      </select>
+    </div>
+    <!-- Select a file input -->
+    <div class="mt-6 border-dashed border-2 border-gray-300 rounded-md p-4">
+      <label for="fileInput" class="block text-lg text-center font-medium text-gray-700">Selecciona un archivo
+        CSV:</label>
+      <input type="file" id="fileInput" accept=".csv"
+        class="mt-1 block
+        w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
+    </div>
+
+    <!-- Two columns, one for the form and the second for results -->
+    <div class="flex flex-col md:flex-row w-full mt-6">
+      <!-- Form column -->
+      <div class="w-full px-16 h-full" id="forms-div">
+
+        <h2 class="text-2xl text-center font-bold text-gray-800 mt-6">Configuración del algoritmo</h2>
+
+        <!-- Second input file -->
+        <div class="mt-6 border-dashed border-2 border-gray-300 rounded-md p-4" id="secondFileInput"
+          style="display: none;">
+          <label for="fileInput2" class="block text
+          -lg text-center font-medium text-gray-700">Selecciona el archivo entrenamiento CSV:</label>
+          <input type="file" id="fileInput2"
+            class="mt-1 block
+          w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
+        </div>
+
+        <!-- Third input file -->
+        <div class="mt-6 border-dashed border-2 border-gray-300 rounded-md p-4" id="thirdFileInput"
+          style="display: none;">
+          <label for="fileInput3" class="block text
+          -lg text-center font-medium text-gray-700">Selecciona el archivo de predicción CSV:</label>
+          <input type="file" id="fileInput3"
+            class="mt-1 block
+          w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
+        </div>
+
+
+        <!-- Change percentage -->
+        <div id="percentagediv" style="display: block;">
+          <label for="changePercentage" style="display: block;"
+            class="block text-lg font-medium text-gray-700">Porcentaje
+            de entrenamiento:</label>
+          <input type="number" id="changePercentage" value="0.8"
+            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
+        </div>
+
+
+
+        <!-- Grade of polonomial regression -->
+        <div id="gradediv" style="display: none;">
+
+          <label for="grade" style="display: block;" class="block text-lg font-medium text-gray-700">Grado de la
+            regresión polinómica:</label>
+          <input type="number" id="grade" value="2"
+            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
+        </div>
+
+
+        <!-- Div for 4 buttons -->
+        <div id="buttonsdiv" style="display: block;" class="self-end">
+          <div class="flex justify-center flex-row gap-10 mt-6">
+            <button id="trainButton" onclick="trainModel()"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Entrenar</button>
+            <button id="predictButton" onclick="predictModel()"
+              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Predecir</button>
+            <button id="resetButton" onclick="showGraph()"
+              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Mostrar gráfica</button>
+            <button id="saveButton" onclick="showTrend()"
+              class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Tendencia</button>
+            <button id="saveButton" onclick="showPatterns()"
+              class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Patrones</button>
+          </div>
+        </div>
+        <!-- Div for logs -->
+        <p id="log" class="w-full mt-6 text-center text-lg font-bold text-gray-800 bg-gray-200"></p>
+      </div>
+
+      <!-- Results column -->
+      <div class="w-full" id="results_div">
+      </div>
+
+    </div>
+</body>
+
+</html>
