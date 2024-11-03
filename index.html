@@ -5,14 +5,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Proyecto 2 IA</title>
-
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.js"></script>
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<script type="text/javascript" src="js/select.js"></script>
-<script type="text/javascript" src="js/main.js"></script>
-<script type="text/javascript" src="js/tytus.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="tytus.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 
@@ -28,8 +27,7 @@
         class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
         <option value="linear_regression">Regresión Lineal</option>
         <option value="polynomial_regression">Regresión Polinómica</option>
-        <option value="neural_network">
-          Red Neuronal
+        <option value="decision_tree"> Árbol de decisiones
         </option>
       </select>
     </div>
@@ -49,37 +47,14 @@
 
         <h2 class="text-2xl text-center font-bold text-gray-800 mt-6">Configuración del algoritmo</h2>
 
-        <!-- Second input file -->
-        <div class="mt-6 border-dashed border-2 border-gray-300 rounded-md p-4" id="secondFileInput"
-          style="display: none;">
-          <label for="fileInput2" class="block text
-          -lg text-center font-medium text-gray-700">Selecciona el archivo entrenamiento CSV:</label>
-          <input type="file" id="fileInput2"
-            class="mt-1 block
-          w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
-        </div>
-
-        <!-- Third input file -->
-        <div class="mt-6 border-dashed border-2 border-gray-300 rounded-md p-4" id="thirdFileInput"
-          style="display: none;">
-          <label for="fileInput3" class="block text
-          -lg text-center font-medium text-gray-700">Selecciona el archivo de predicción CSV:</label>
-          <input type="file" id="fileInput3"
-            class="mt-1 block
-          w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
-        </div>
-
-
         <!-- Change percentage -->
         <div id="percentagediv" style="display: block;">
           <label for="changePercentage" style="display: block;"
             class="block text-lg font-medium text-gray-700">Porcentaje
             de entrenamiento:</label>
-          <input type="number" id="changePercentage" value="0.8"
+          <input type="number" id="changePercentage" value="0.0"
             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
         </div>
-
-
 
         <!-- Grade of polonomial regression -->
         <div id="gradediv" style="display: none;">

@@ -2,11 +2,47 @@
 let xTrain = [];
 let yTrain = [];
 let yPredict = [];
+let treeData = [];
+let headers = [];
+let trainData = [];
+let predictionData = [];
 let model;
+let tree;
+let root;
+let predictionTree;
+
+// Function to get the inputs
+function getInputs() {
+  const changePercentageInputDiv = document.getElementById("percentagediv");
+  const gradeInputDiv = document.getElementById("gradediv");
+
+  return {
+    changePercentageInputDiv,
+    gradeInputDiv,
+  };
+}
+
+function selectAlgorithm() {
+  const modelSelected = document.getElementById("algorithmSelect").value;
+
+  const { changePercentageInputDiv, gradeInputDiv } = getInputs();
+
+  if (modelSelected === "linear_regression") {
+    changePercentageInputDiv.style.display = "block";
+    gradeInputDiv.style.display = "none";
+  } else if (modelSelected === "polynomial_regression") {
+    changePercentageInputDiv.style.display = "none";
+    gradeInputDiv.style.display = "block";
+  } else if (modelSelected === "decision_tree") {
+    changePercentageInputDiv.style.display = "block";
+    gradeInputDiv.style.display = "none";
+  }
+}
 
 function loadFile(callback) {
   // get file
   const fileInput = document.getElementById("fileInput");
+  const modelSelected = document.getElementById("algorithmSelect").value;
   const file = fileInput.files[0];
 
   if (!file) {
@@ -18,7 +54,12 @@ function loadFile(callback) {
   const reader = new FileReader();
   reader.onload = function (event) {
     const data = event.target.result;
-    processFile(data);
+
+    if (modelSelected === "decision_tree") {
+      processTreeFile(data);
+    } else {
+      processFile(data);
+    }
 
     if (callback) {
       callback();
@@ -39,6 +80,26 @@ function processFile(data) {
     if (row.length === 2) {
       xTrain.push(parseFloat(row[0]));
       yTrain.push(parseFloat(row[1]));
+    }
+  }
+}
+
+// function to proccess the file of tree
+function processTreeFile(data) {
+  treeData = [];
+  headers = [];
+
+  const rows = data.split("\n");
+
+  for (let i = 0; i < rows.length; i++) {
+    if (i === 0) {
+      headers = rows[i].split(",");
+    } else {
+      const item = rows[i].split(",");
+      // clean the \r from the last element
+      item[item.length - 1] = item[item.length - 1].replace("\r", "");
+
+      treeData.push(item);
     }
   }
 }
@@ -85,6 +146,31 @@ function trainModel() {
         "<br>Soluciones: " +
         JSON.stringify(model.solutions.join(", "));
     });
+  } else if (modelSelected === "decision_tree") {
+    const changePercentage = document.getElementById("changePercentage").value;
+    let train;
+    if (changePercentage === "") train = 0.8;
+    else train = parseFloat(changePercentage);
+
+    // clean
+    // trainData = [];
+    // predictionData = [];
+
+    loadFile(function () {
+      // USE THE DECISION TREE MODEL
+      // console.log("Decision Tree");
+      // console.log("Headers: ", headers);
+      // console.log("Data: ", treeData);
+      // console.log("data length: ", treeData.length);
+      // const length = treeData.length;
+      // const array = treeData
+      // const trainData = array.slice(0, Math.floor(length * train));
+      // trainData.unshift(headers);
+      // const predictionData = array.slice(Math.floor(length * train));
+      // predictionData.unshift(headers);
+      // console.log("trainData ", trainData);
+      // console.log("predictionData", predictionData);
+    });
   } else {
     document.getElementById("log").innerHTML += "<br>Modelo no seleccionado";
   }
@@ -102,6 +188,30 @@ function predictModel() {
     yPredict = model.predict(xTrain);
     document.getElementById("results_div").innerHTML =
       "<br>Predicciones Y: " + yPredict;
+  } else if (modelSelected === "decision_tree") {
+    const changePercentage = document.getElementById("changePercentage").value;
+    let train;
+    if (changePercentage === "") train = 0.8;
+    else train = parseFloat(changePercentage);
+    const length = treeData.length;
+    const array = treeData;
+
+    const trainData = array.slice(0, Math.floor(length * train));
+
+    trainData.unshift(headers);
+
+    predictionData = array.slice(Math.floor(length * train));
+
+    predictionData.unshift(headers);
+    tree = new DecisionTreeID3(trainData);
+
+    root = tree.train(tree.dataset);
+
+    predictionTree = tree.predict(predictionData, root);
+
+    document.getElementById("log").innerHTML +=
+      "<br>Árbol de decisión entrenado.<br>Train Data: " +
+      JSON.stringify(predictionTree);
   }
 }
 
@@ -132,6 +242,32 @@ function showGraph() {
 
     google.charts.load("current", { packages: ["corechart"] });
     google.charts.setOnLoadCallback(() => drawChart(dataArray));
+  } else if (root && modelSelected === "decision_tree") {
+    // const dot = tree.generateDotString(root);
+    const dot = getgraphttree();
+
+    const chart = document.getElementById("results_div");
+
+    const parsDot = vis.network.convertDot(dot);
+    const data = {
+      nodes: parsDot.nodes,
+      edges: parsDot.edges,
+    };
+
+    const options = {
+      layout: {
+        hierarchical: {
+          levelSeparation: 100,
+          nodeSpacing: 100,
+          parentCentralization: true,
+          direction: "UD", // UD, DU, LR, RL
+          sortMethod: "directed",
+        },
+      },
+    };
+
+    // Crear la red de visualización
+    const network = new vis.Network(chart, data, options);
   } else {
     alert("Primero realiza una predicción para mostrar la gráfica.");
   }
@@ -282,4 +418,14 @@ function drawPatternChart(dataArray) {
     document.getElementById("results_div")
   );
   chart.draw(data, options);
+}
+
+function getgraphttree() {
+  return `{aa9bb33445b4 [label="Children"];d5875e39cc7d [label="WorkTime"];aa9bb33445b4--d5875e39cc7d[label="No"];79b8ada68880 [label="Debts"];d5875e39cc7d--79b8ada68880[label="Short"];b9921b2d5c62 [label="No
+"];79b8ada68880--b9921b2d5c62[label="Yes"];4d574a631965 [label="Yes
+"];79b8ada68880--4d574a631965[label="No"];10e46724bebe [label="Yes
+"];d5875e39cc7d--10e46724bebe[label="Long"];8c480ba41b5e [label="No
+"];aa9bb33445b4--8c480ba41b5e[label="Several"];c200c682718d [label="Debts"];aa9bb33445b4--c200c682718d[label="One"];b1dbb7800d7c [label="Yes
+"];c200c682718d--b1dbb7800d7c[label="No"];9070b79d29bd [label="No
+"];c200c682718d--9070b79d29bd[label="Yes"];}`;
 }
